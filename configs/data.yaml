@@ -1,0 +1,23 @@
+sources:
+  orders: data/raw/orders.csv
+  order_details: data/raw/order_details.csv
+  products: data/raw/products.csv
+  users: data/raw/users.csv
+
+preprocessing:
+  order_status: Complete
+
+target:
+  name: repurchased_60d
+  horizon_days: 60
+  observation_end: "2025-02-18T18:26:43.894638Z"
+
+split:
+  test_size: 0.25
+  random_state: 42
+  stratify: true
+
+output:
+  train_path: data/processed/train.parquet
+  test_path: data/processed/test.parquet
+  metadata_path: data/processed/metadata.json

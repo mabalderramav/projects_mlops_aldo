@@ -84,3 +84,4 @@ target/
 
 # Environment variable files
 .envrc
+.env

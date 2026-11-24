@@ -1,0 +1,15 @@
+data:
+  path: data/processed/train.parquet
+  target: repurchased_60d
+
+model:
+  name: xgboost
+  hyperparameters_source: manual
+  hyperparameters:
+    n_estimators: 100
+    max_depth: 5
+    learning_rate: 0.1
+    random_state: 42
+
+training:
+  artifact_path: artifacts/xgboost.joblib

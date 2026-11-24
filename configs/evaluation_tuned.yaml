@@ -1,0 +1,10 @@
+data:
+  path: data/processed/test.parquet
+  target: repurchased_60d
+
+model:
+  name: xgboost
+  artifact_path: artifacts/xgboost_tuned.joblib
+
+evaluation:
+  metrics_path: artifacts/metrics_tuned.json

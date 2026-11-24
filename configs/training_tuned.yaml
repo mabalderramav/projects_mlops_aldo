@@ -1,0 +1,11 @@
+data:
+  path: data/processed/train.parquet
+  target: repurchased_60d
+
+model:
+  name: xgboost
+  hyperparameters_source: tuning
+  hyperparameters_path: artifacts/best_hyperparameters.json
+
+training:
+  artifact_path: artifacts/xgboost_tuned.joblib

@@ -1,0 +1,30 @@
+data:
+  path: data/processed/train.parquet
+  target: repurchased_60d
+
+model:
+  name: xgboost
+
+  hyperparameters:
+    n_estimators: 100
+    max_depth: 5
+    learning_rate: 0.1
+    random_state: 42
+
+validation:
+  strategy: stratified_kfold
+  n_splits: 5
+  shuffle: true
+  random_state: 42
+  n_jobs: 1
+
+  metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1
+    - roc_auc
+    - average_precision
+
+output:
+  metrics_path: artifacts/validation_metrics.json

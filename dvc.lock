@@ -1,0 +1,62 @@
+schema: '2.0'
+stages:
+  prepare_data:
+    cmd: uv run python prepare_data.py
+    deps:
+    - path: configs/data.yaml
+      hash: md5
+      md5: aba6ff683269363ceef628b58da85ba2
+      size: 487
+    - path: data/raw/
+      hash: md5
+      md5: 84e246d4a5bde6eafe0f13dd320a43d4.dir
+      size: 52591137
+      nfiles: 4
+    - path: prepare_data.py
+      hash: md5
+      md5: f2f19640de9e8126cfb3f77c4d6e8d7a
+      size: 650
+    - path: pyproject.toml
+      hash: md5
+      md5: 576e33ec79fd7151f723111082022001
+      size: 1872
+    - path: src/common/
+      hash: md5
+      md5: 13b2bd6afa2a5c225ac9faba0c7a3334.dir
+      size: 928
+      nfiles: 2
+    - path: src/data/
+      hash: md5
+      md5: 28e2e58965407797708f4ab57942fc7a.dir
+      size: 29339
+      nfiles: 12
+    - path: src/features/
+      hash: md5
+      md5: 4735feab6b103078604c4113f7fb3687.dir
+      size: 16580
+      nfiles: 8
+    - path: src/preprocessing/cleaner.py
+      hash: md5
+      md5: 35deeff51abac299d64707bb0e5d38e0
+      size: 1433
+    - path: src/settings.py
+      hash: md5
+      md5: 1fe8336c34a86eb9640f2357d8ad2a03
+      size: 731
+    - path: uv.lock
+      hash: md5
+      md5: 57a58c6a29f88b3f0bdf56ec7ded4a57
+      size: 952511
+    outs:
+    - path: data/processed/metadata.json
+      hash: md5
+      md5: 3d4b3a89b1ee91ff103bc14d283a1576
+      size: 2101
+    - path: data/processed/test.parquet
+      hash: md5
+      md5: 2fed313ef34e22243edb77d0bf360ed3
+      size: 261344
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: f2113c5299f2250364c7251273f644ce
+      size: 660507

@@ -1,0 +1,22 @@
+stages:
+
+  prepare_data:
+
+    cmd: uv run python prepare_data.py
+
+    deps:
+      - prepare_data.py
+      - src/data/
+      - src/features/
+      - src/preprocessing/cleaner.py
+      - src/common/
+      - src/settings.py
+      - configs/data.yaml
+      - data/raw/
+      - pyproject.toml
+      - uv.lock
+
+    outs:
+      - data/processed/train.parquet
+      - data/processed/test.parquet
+      - data/processed/metadata.json

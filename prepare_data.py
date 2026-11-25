@@ -2,7 +2,7 @@ import logging
 
 from src.common.logging import setup_logging
 from src.settings import Settings
-from src.training.pipeline import TrainingPipeline
+from src.data.pipeline import DataPipeline
 
 
 logger = logging.getLogger(__name__)
@@ -16,13 +16,13 @@ def main() -> None:
         logging.getLogger().setLevel(settings.log_level)
         logger.info("Application environment: %s", settings.app_env)
 
-        pipeline = TrainingPipeline(
-            config_path=settings.training_config_path
+        pipeline = DataPipeline(
+            config_path=settings.data_config_path
         )
         pipeline.run()
 
-    except Exception as e:
-        logger.exception("Application execution failed: %s", e)
+    except Exception:
+        logger.exception("Data pipeline execution failed")
         raise SystemExit(1)
 
 if __name__ == "__main__":

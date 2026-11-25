@@ -1,0 +1,13 @@
+# Commands for managing the MLOps project
+
+## Synchronize the project environment
+uv sync
+
+## Run the data preparation script
+uv run python prepare_data.py
+
+## Run the hyperparameter tuning script
+uv run python tune.py
+
+## Run the training script
+uv run python train.py

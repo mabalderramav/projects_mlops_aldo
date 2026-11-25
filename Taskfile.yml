@@ -1,0 +1,38 @@
+version: "3"
+
+tasks:
+
+  infra:up:
+    desc: Start local MLOps infrastructure
+    cmds:
+      - docker compose up -d
+
+  infra:down:
+    desc: Stop local MLOps infrastructure
+    cmds:
+      - docker compose down
+
+  infra:status:
+    desc: Show infrastructure status
+    cmds:
+      - docker compose ps
+
+  dvc:pull:
+    desc: Download versioned data
+    cmds:
+      - uv run dvc pull
+
+  dvc:push:
+    desc: Upload versioned data
+    cmds:
+      - uv run dvc push
+
+  dvc:status:
+    desc: Check local DVC status
+    cmds:
+      - uv run dvc status
+
+  dvc:remote:status:
+    desc: Check remote DVC status
+    cmds:
+      - uv run dvc status -c

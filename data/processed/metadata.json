@@ -1,0 +1,65 @@
+{
+    "target": "repurchased_60d",
+    "horizon_days": 60,
+    "observation_end": "2025-02-18T18:26:43.894638+00:00",
+    "total_rows": 24063,
+    "train_rows": 18047,
+    "test_rows": 6016,
+    "feature_count": 23,
+    "positive_rate": {
+        "train": 0.01978168116584474,
+        "test": 0.01978058510638298
+    },
+    "schema": {
+        "first_order_items": "int64",
+        "first_order_total_value": "float64",
+        "first_order_avg_price": "float64",
+        "first_order_max_price": "float64",
+        "first_order_min_price": "float64",
+        "first_order_avg_cost": "float64",
+        "first_order_avg_retail_price": "float64",
+        "first_order_categories": "int64",
+        "first_order_brands": "int64",
+        "first_order_departments": "int64",
+        "most_common_category": "str",
+        "most_common_brand": "str",
+        "most_common_department": "str",
+        "age": "int64",
+        "gender": "str",
+        "state": "str",
+        "country": "str",
+        "traffic_source": "str",
+        "first_purchase_hour": "int32",
+        "first_purchase_day_of_week": "int32",
+        "first_purchase_month": "int32",
+        "first_purchase_year": "int32",
+        "days_registration_to_first_purchase": "int64",
+        "repurchased_60d": "int8"
+    },
+    "config": {
+        "sources": {
+            "orders": "data/raw/orders.csv",
+            "order_details": "data/raw/order_details.csv",
+            "products": "data/raw/products.csv",
+            "users": "data/raw/users.csv"
+        },
+        "preprocessing": {
+            "order_status": "Complete"
+        },
+        "target": {
+            "name": "repurchased_60d",
+            "horizon_days": 60,
+            "observation_end": "2025-02-18T18:26:43.894638Z"
+        },
+        "split": {
+            "test_size": 0.25,
+            "random_state": 42,
+            "stratify": true
+        },
+        "output": {
+            "train_path": "data/processed/train.parquet",
+            "test_path": "data/processed/test.parquet",
+            "metadata_path": "data/processed/metadata.json"
+        }
+    }
+}

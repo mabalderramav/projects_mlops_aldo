@@ -12,6 +12,8 @@ dependencies = [
     "pydantic>=2.12.3",
     "pydantic-settings>=2.11.0",
     "pyarrow>=22.0.0",
+    "optuna>=5.1.0",
+    "dvc[s3]>=3.67.1",
 ]
 
 [tool.uv.sources]

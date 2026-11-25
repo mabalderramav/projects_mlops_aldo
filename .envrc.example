@@ -1,0 +1,8 @@
+# RustFS credentials
+export RUSTFS_ACCESS_KEY=replace-with-your-access-key
+export RUSTFS_SECRET_KEY=replace-with-your-secret-key
+
+# S3 client credentials
+export AWS_ACCESS_KEY_ID="${RUSTFS_ACCESS_KEY}"
+export AWS_SECRET_ACCESS_KEY="${RUSTFS_SECRET_KEY}"
+export AWS_DEFAULT_REGION=replace-with-your-region

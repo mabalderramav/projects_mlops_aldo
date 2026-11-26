@@ -1,3 +1,8 @@
+# Requirements:
+https://taskfile.dev/docs/installation
+task -v; task --version
+task --summary
+
 # Commands for managing the MLOps project
 
 ## Synchronize the project environment

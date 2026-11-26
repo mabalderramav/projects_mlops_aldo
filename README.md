@@ -1,85 +1,118 @@
-# Project MLOps GEM
+# MLOps Customer Repurchase Project
 
-Project in order to perform more productivities about ML models
+An end-to-end machine-learning project for predicting whether a customer will repurchase within 60 days. It turns order, product, and user data into a reproducible training dataset, trains an XGBoost classifier, validates and tunes it, and records the resulting artifacts locally.
 
-## Primeros pasos
+## What is included
 
-Instala [uv](https://docs.astral.sh/uv/) y, desde la raíz del proyecto, sincroniza el entorno con las dependencias declaradas en `pyproject.toml` y fijadas en `uv.lock`:
+- Data preparation from CSV source data in `data/raw/`
+- Feature engineering and preprocessing in `src/features/` and `src/preprocessing/`
+- A stratified train/test split written as Parquet files
+- XGBoost model training, cross-validation, Optuna hyperparameter tuning, and holdout evaluation
+- DVC tracking for the data-preparation stage and optional S3-compatible remote storage
+- A Docker Compose definition for local RustFS object storage
+
+## Prerequisites
+
+- Python 3.12 or newer
+- [uv](https://docs.astral.sh/uv/)
+- Docker and Docker Compose only when using the local object-storage service
+
+## Quick start
+
+From the repository root, create the environment and install the locked dependencies:
 
 ```bash
 uv sync
 ```
 
-`uv sync` crea `.venv/` automáticamente e instala las dependencias del proyecto y las del grupo de desarrollo. Para ejecutar comandos dentro del entorno, usa `uv run <comando>`. Si prefieres activarlo manualmente, ejecuta `source .venv/bin/activate` en macOS/Linux o `.venv\Scripts\activate` en Windows.
+Prepare the dataset, train the baseline model, and evaluate it:
 
-## Estructura inicial
-
-```text
-projects_mlops_aldo/
-├── .env.example
-├── .envrc
-├── .gitattributes
-├── .github/
-│   └── workflows/
-│       └── .gitkeep
-├── .gitignore
-├── Dockerfile
-├── LICENSE
-├── README.md
-├── Taskfile.yml
-├── artifacts/
-│   └── .gitkeep
-├── configs/
-│   └── .gitkeep
-├── data/
-│   ├── processed/
-│   │   └── .gitkeep
-│   └── raw/
-│       ├── order_details.csv
-│       ├── orders.csv
-│       ├── products.csv
-│       └── users.csv
-├── docker-compose.yml
-├── docs/
-│   └── .gitkeep
-├── infra/
-│   └── .gitkeep
-├── notebooks/
-│   └── exploration.ipynb
-├── pyproject.toml
-├── scripts/
-│   └── .gitkeep
-├── src/
-│   ├── __init__.py
-│   └── settings.py
-├── tests/
-│   └── .gitkeep
-└── uv.lock
+```bash
+uv run python prepare_data.py
+uv run python train.py
+uv run python evaluate.py
 ```
 
-- `data/raw/` contiene datos de ejemplo; `data/processed/` es la ubicación para datos procesados.
-- `src/`: paquete para el código fuente y la configuración del proyecto.
-- `configs/`: ubicación para archivos de configuración.
-- `tests/`: ubicación para las pruebas del proyecto.
-- `notebooks/`: notebook inicial de exploración y experimentación.
-- `artifacts/`: resultados y artefactos, como modelos serializados.
-- `docs/`, `scripts/` e `infra/`: documentación, scripts auxiliares e infraestructura.
-- `.github/workflows/`: ubicación para posibles flujos de GitHub Actions.
+The commands use the configuration files in `configs/` by default. The prepared dataset is written to `data/processed/`; model and metric artifacts are written to `artifacts/`.
 
-Los directorios `artifacts/`, `configs/`, `data/processed/`, `docs/`, `infra/`, `scripts/` y `tests/` están inicialmente vacíos. `Dockerfile`, `docker-compose.yml`, `Taskfile.yml`, `.env.example` y `.envrc` también están vacíos; no hay flujos de CI/CD, entrenamiento, seguimiento de experimentos ni despliegue configurados. Las dependencias se declaran en `pyproject.toml` y sus versiones se fijan en `uv.lock`.
+## Workflow
 
-El `.gitignore` excluye `.envrc` y archivos locales como cachés de Python, pero no excluye los datos de `data/` ni el entorno `.venv/` creado por `uv sync`. Añade `.venv/` si no quieres incluir ese entorno en Git.
+| Step | Command | Default configuration | Output |
+| --- | --- | --- | --- |
+| Prepare data | `uv run python prepare_data.py` | `configs/data.yaml` | `data/processed/train.parquet`, `test.parquet`, and `metadata.json` |
+| Validate | `uv run python validate.py` | `configs/validation.yaml` | `artifacts/validation_metrics.json` |
+| Tune | `uv run python tune.py` | `configs/tuning.yaml` | `artifacts/best_hyperparameters.json` and `tuning_results.json` |
+| Train baseline | `uv run python train.py` | `configs/training.yaml` | `artifacts/xgboost.joblib` |
+| Evaluate baseline | `uv run python evaluate.py` | `configs/evaluation.yaml` | `artifacts/metrics.json` |
 
-## Desarrollo del proyecto
+To train and evaluate with tuned parameters, point the settings at the tuned configurations:
 
-Añade el código a `src/`, guarda las configuraciones en `configs/`, organiza los datos según su etapa y escribe las pruebas en `tests/`. La estructura facilita la organización, pero no garantiza la reproducibilidad: documenta y controla las dependencias, versiones de datos, parámetros y procedimientos de ejecución.
+```bash
+TRAINING_CONFIG_PATH=configs/training_tuned.yaml uv run python train.py
+EVALUATION_CONFIG_PATH=configs/evaluation_tuned.yaml uv run python evaluate.py
+```
 
-## Licencia
+The scripts read settings from environment variables and `.env` if present. Useful overrides include `APP_ENV`, `LOG_LEVEL`, `DATA_CONFIG_PATH`, `TRAINING_CONFIG_PATH`, `VALIDATION_CONFIG_PATH`, `TUNING_CONFIG_PATH`, and `EVALUATION_CONFIG_PATH`.
 
+## Data and modeling
 
-No se ha seleccionado una licencia; el archivo `LICENSE` generado no contiene texto de licencia.
+`configs/data.yaml` defines the four raw input sources, filters completed orders, defines the `repurchased_60d` target, and controls the stratified split. The default model is XGBoost. Its baseline parameters are stored in `configs/training.yaml`; the Optuna search space and cross-validation settings are in `configs/tuning.yaml`.
 
+Raw source data may contain sensitive business or customer information. Do not commit credentials, access keys, or replacement production data without confirming the repository's data-handling requirements.
 
-## Atribución
+## Reproducibility with DVC
 
-Proyecto basado en [Cookiecutter MLOps](https://github.com/Chim-SO/cookiecutter-mlops/), a su vez basado en [Cookiecutter Data Science](https://drivendata.github.io/cookiecutter-data-science/).
+The `prepare_data` stage is declared in `dvc.yaml`. Reproduce it with:
+
+```bash
+uv run dvc repro
+```
+
+Useful DVC commands are also available through Task:
+
+```bash
+task dvc:status
+task dvc:pull
+task dvc:push
+```
+
+Run `task dvc:pull` or `task dvc:push` only after a DVC remote has been configured and you have the required access.
+
+## Local object storage
+
+`docker-compose.yml` starts RustFS, an S3-compatible object store bound to localhost ports `9000` and `9001`. Set `RUSTFS_ACCESS_KEY` and `RUSTFS_SECRET_KEY` in your environment or `.env`, then run:
+
+```bash
+task infra:up
+task infra:status
+task infra:down
+```
+
+## Repository layout
+
+```text
+configs/       Pipeline and model configuration
+data/raw/      Source CSV files
+data/processed/ Prepared train/test datasets
+src/data/      Data loading, splitting, and pipeline code
+src/features/  Feature and target construction
+src/preprocessing/ Data cleaning and transformations
+src/training/  Model training
+src/validation/ Cross-validation
+src/tuning/    Optuna tuning
+src/evaluation/ Holdout evaluation
+artifacts/     Models, metrics, and tuning results
+```
+
+## Development
+
+Run the available checks with the development dependencies installed:
+
+```bash
+uv run pytest
+uv run black --check .
+uv run isort --check-only .
+uv run mypy src
+```
+
+See [AGENTS.md](AGENTS.md) for contribution and automation guidance.
